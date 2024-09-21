@@ -32,5 +32,21 @@ public class ReservationController {
         reservationService.updateRequestStatus(reservationId, status);
         return ResponseEntity.ok().build();
     }
+    @GetMapping("/count/{ownerId}")
+    public ResponseEntity<Long> countRequestsByOwner(@PathVariable Long ownerId) {
+        Long requestCount = reservationService.countRequestsByOwner(ownerId);
+        return ResponseEntity.ok(requestCount);
+    }
+    @GetMapping("/requester/{requesterId}")
+    public ResponseEntity<List<Reservation>> getRequestsForRequester(@PathVariable Long requesterId) {
+        List<Reservation> reservations = reservationService.getRequestsByRequester(requesterId);
+        return ResponseEntity.ok(reservations);
+    }
+
+    @GetMapping("/count/requester/{requesterId}")
+    public ResponseEntity<Long> countRequestsByRequester(@PathVariable Long requesterId) {
+        Long requestCount = reservationService.countRequestsByRequester(requesterId);
+        return ResponseEntity.ok(requestCount);
+    }
 }
 

@@ -51,4 +51,15 @@ public class ReservationService {
         reservation.setStatus(status);
         reservationRepository.save(reservation);
     }
+    public Long countRequestsByOwner(Long ownerId) {
+        return reservationRepository.countByOwnerId(ownerId);
+    }
+    public List<Reservation> getRequestsByRequester(Long requesterId) {
+        return reservationRepository.findByRequesterId(requesterId);
+    }
+
+    // New method to count requests by the requester for badge content
+    public Long countRequestsByRequester(Long requesterId) {
+        return reservationRepository.countByRequesterId(requesterId);
+    }
 }

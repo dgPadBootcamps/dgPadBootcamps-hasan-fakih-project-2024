@@ -19,7 +19,7 @@ public class Image {
 
     private String imageUrl;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "furniture_id")
     @JsonIgnore
     private Furniture furniture;

@@ -36,19 +36,10 @@ public class FurnitureController {
     public ResponseEntity<Furniture> createFurniture(@RequestBody Furniture furniture, @PathVariable Long userId) {
         try {
             Furniture createdFurniture = furnitureService.createFurniture(furniture, userId);
-
-            // Save images
-            if (furniture.getImages() != null) {
-                for (Image image : furniture.getImages()) {
-                    imageService.saveImageForFurniture(createdFurniture.getId(), image);
-                }
-            }
-
             return ResponseEntity.ok(createdFurniture);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
@@ -61,17 +52,13 @@ public class FurnitureController {
 
     // Update a furniture item
     @PutMapping("/update/{id}")
-    public ResponseEntity<Furniture> updateFurniture(
-            @PathVariable Long id,
-            @RequestBody Furniture furniture
-    ) {
+    public ResponseEntity<Furniture> updateFurniture(@PathVariable Long id, @RequestBody Furniture furniture) {
         try {
             Furniture updatedFurniture = furnitureService.updateFurniture(id, furniture);
             return ResponseEntity.ok(updatedFurniture);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
     // Delete a furniture item

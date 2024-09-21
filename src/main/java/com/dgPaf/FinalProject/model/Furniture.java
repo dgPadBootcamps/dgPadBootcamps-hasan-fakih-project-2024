@@ -36,8 +36,8 @@ public class Furniture {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Address address;
 
-    @OneToMany(mappedBy = "furniture", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Image> images = new ArrayList<>();
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    private Image image;
 
     public void markAsUnavailable() {
         this.available = false;
@@ -111,12 +111,14 @@ public class Furniture {
         this.address = address;
     }
 
-    public List<Image> getImages() {
-        return images;
+    public Image getImage() {
+        return image;
     }
-    public void setImages(List<Image> images) {
-        this.images = images;
+
+    public void setImage(Image image) {
+        this.image = image;
     }
+
     @PrePersist
     protected void onCreate() {
         this.uploadDate = LocalDateTime.now();

@@ -12,5 +12,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("SELECT COUNT(DISTINCT r.requester.id) FROM Reservation r WHERE r.furniture.owner.id = :userId")
     long countDistinctPeopleHelped(@Param("userId") Long userId);
+
+    Long countByOwnerId(Long ownerId);
+
+    List<Reservation> findByRequesterId(Long requesterId);
+
+    // New method to count reservations by requester
+    Long countByRequesterId(Long requesterId);
 }
 

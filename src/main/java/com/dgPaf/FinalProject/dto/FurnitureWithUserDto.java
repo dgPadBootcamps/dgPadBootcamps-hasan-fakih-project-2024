@@ -2,11 +2,8 @@ package com.dgPaf.FinalProject.dto;
 
 import com.dgPaf.FinalProject.model.Address;
 import com.dgPaf.FinalProject.model.Furniture;
-import com.dgPaf.FinalProject.model.Image;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class FurnitureWithUserDto {
 
@@ -22,7 +19,8 @@ public class FurnitureWithUserDto {
     private String userName;
     private String userEmail;
 
-    private List<String> imageUrls;
+    // Changed from List<String> to a single String for one image URL
+    private String imageUrl;
 
     // Constructor
     public FurnitureWithUserDto(Furniture furniture) {
@@ -38,11 +36,14 @@ public class FurnitureWithUserDto {
         this.userName = furniture.getOwner().getFullName();
         this.userEmail = furniture.getOwner().getEmail();
 
-        this.imageUrls = furniture.getImages() != null ?
-                furniture.getImages().stream()
-                        .map(Image::getImageUrl)
-                        .collect(Collectors.toList()) : null;
+        // Since there's only one image now, we just get the first one (if it exists)
+        if (furniture.getImage() != null) {
+            this.imageUrl = furniture.getImage().getImageUrl();
+        } else {
+            this.imageUrl = null;  // No image available
+        }
 
+        // Address information
         Address addressObj = furniture.getAddress();
         if (addressObj != null) {
             this.address = "Street: " + addressObj.getStreet() + ", City: " + addressObj.getCity();
@@ -50,6 +51,8 @@ public class FurnitureWithUserDto {
             this.address = "No address provided";
         }
     }
+
+    // Getters and setters for all fields
 
     public long getFurnitureId() {
         return furnitureId;
@@ -131,11 +134,12 @@ public class FurnitureWithUserDto {
         this.address = address;
     }
 
-    public List<String> getImageUrls() {
-        return imageUrls;
+    // Getter and setter for the single image URL
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setImageUrls(List<String> imageUrls) {
-        this.imageUrls = imageUrls;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

@@ -48,17 +48,13 @@ public class FurnitureService {
         furniture.setUploadDate(LocalDateTime.now());
         furniture.setAvailable(true);
 
-        Furniture savedFurniture = furnitureRepository.save(furniture);
-
-        // Save images
-        if (furniture.getImages() != null) {
-            for (Image image : furniture.getImages()) {
-                image.setFurniture(savedFurniture);
-                imageRepository.save(image);
-            }
+        if (furniture.getImage() != null) {
+            Image image = furniture.getImage();
+            image.setFurniture(furniture);
+            imageRepository.save(image);
         }
 
-        return savedFurniture;
+        return furnitureRepository.save(furniture);
     }
 
 
@@ -68,28 +64,34 @@ public class FurnitureService {
     }
 
     // Update furniture item
-    public Furniture updateFurniture(Long furnitureId, Furniture updatedFurniture) {
-        Furniture existingFurniture = furnitureRepository.findById(furnitureId)
-                .orElseThrow(() -> new RuntimeException("Furniture not found"));
+    @Transactional
+    public Furniture updateFurniture(Long id, Furniture updatedFurniture) {
+        Furniture existingFurniture = furnitureRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Furniture not found"));
 
+        // Update furniture properties
         existingFurniture.setTitle(updatedFurniture.getTitle());
         existingFurniture.setDescription(updatedFurniture.getDescription());
         existingFurniture.setCategory(updatedFurniture.getCategory());
         existingFurniture.setAvailable(updatedFurniture.isAvailable());
-        existingFurniture.setUploadDate(updatedFurniture.getUploadDate());
-        existingFurniture.setAddress(updatedFurniture.getAddress());
 
-        // Update images
-        if (updatedFurniture.getImages() != null) {
-            // Remove old images
-            existingFurniture.getImages().clear();
-            // Add new images
-            for (Image image : updatedFurniture.getImages()) {
-                image.setFurniture(existingFurniture);
-                existingFurniture.getImages().add(image);
-                imageRepository.save(image);
-            }
+        // Handle Address update
+        Address existingAddress = addressRepository.findById(updatedFurniture.getAddress().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Address not found"));
+
+        existingAddress.setStreet(updatedFurniture.getAddress().getStreet());
+        existingAddress.setCity(updatedFurniture.getAddress().getCity());
+        existingAddress.setState(updatedFurniture.getAddress().getState());
+        existingAddress.setZipCode(updatedFurniture.getAddress().getZipCode());
+        existingAddress.setCountry(updatedFurniture.getAddress().getCountry());
+
+        existingFurniture.setAddress(existingAddress);
+
+        // Handle image update if applicable
+        if (updatedFurniture.getImage() != null) {
+            existingFurniture.setImage(updatedFurniture.getImage());
         }
+
         return furnitureRepository.save(existingFurniture);
     }
 
@@ -110,16 +112,14 @@ public class FurnitureService {
     }
 
     public Furniture saveFurniture(Furniture furniture) {
-        if (furniture.getImages() != null && !furniture.getImages().isEmpty()) {
-            // Set the furniture object on each image
-            for (Image image : furniture.getImages()) {
-                image.setFurniture(furniture);
-            }
+        if (furniture.getImage() != null) {
+            furniture.getImage().setFurniture(furniture);
         }
 
-        // Now save the furniture, and it will cascade to images
+        // Now save the furniture, and it will cascade to the single image
         return furnitureRepository.save(furniture);
     }
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public class ResourceNotFoundException extends RuntimeException {
         public ResourceNotFoundException(String message) {
