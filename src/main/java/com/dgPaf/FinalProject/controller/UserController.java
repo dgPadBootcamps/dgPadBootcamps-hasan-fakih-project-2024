@@ -44,21 +44,17 @@ public class UserController {
         }
     }
 
-
-
     @PostMapping("/register")
     public String registerUser(@RequestBody User user) {
         userService.saveUser(user);
         return "User registered successfully!";
     }
-    // UserController.java
     @PostMapping("/logout")
     public String logoutUser(HttpServletRequest request, HttpServletResponse response) {
         // Invalidate the session
         request.getSession().invalidate();
         return "Logout successful!";
     }
-
     @GetMapping("/{userId}/activity")
     public ResponseEntity<UserActivityDto> getUserActivity(@PathVariable Long userId) {
         try {
